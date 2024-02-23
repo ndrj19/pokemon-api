@@ -14,4 +14,17 @@ const getAllPokemonNamesAction = async (req, res) => {
   }
 };
 
-module.exports = { getAllPokemonNamesAction };
+const getAllPokemonTypesAction = async (req, res) => {
+  try {
+    const db = await connectToMongo();
+    const pokemon = db.collection("pokemon");
+
+    const pokemonTypes = await pokemon.distinct("type");
+    res.json(pokemonResponse(pokemonTypes, "type"));
+  } catch (error) {
+    console.error("Error: ", error);
+    res.status(500).json({ message: "Unexpected error", data: [] });
+  }
+};
+
+module.exports = { getAllPokemonNamesAction, getAllPokemonTypesAction };
