@@ -6,8 +6,15 @@ const getAllPokemonAction = async (req, res) => {
     const db = await connectToMongo();
     const pokemon = db.collection("pokemon");
 
-    const pokemonData = await pokemon.find().toArray();
-    res.json(pokemonResponse(pokemonData));
+    let field = req.query.fields;
+    if (field) {
+      if (field === "classification") field = "misc." + field;
+      const pokemonData = await pokemon.distinct(field);
+      res.json(pokemonResponse(pokemonData, field));
+    } else {
+      const pokemonData = await pokemon.find().toArray();
+      res.json(pokemonResponse(pokemonData, "collection"));
+    }
   } catch (error) {
     console.error("Error: ", error);
     res.status(500).json({ message: "Unexpected error", data: [] });
@@ -21,7 +28,7 @@ const getPokemonByIdAction = async (req, res) => {
 
     const pokemonId = req.params.pokemonId.padStart(3, "0");
     const pokemonData = await pokemon.find({ id: pokemonId }).toArray();
-    res.json(pokemonResponse(pokemonData));
+    res.json(pokemonResponse(pokemonData, pokemonId));
   } catch (error) {
     console.error("Error: ", error);
     res.status(500).json({ message: "Unexpected error", data: [] });

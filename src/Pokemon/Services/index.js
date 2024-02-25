@@ -1,7 +1,7 @@
-const pokemonResponse = (pokemon) => {
+const pokemonResponse = (data, category) => {
   return {
-    message: "Successfully retrieved all pokemon data.",
-    data: pokemon,
+    message: "Successfully retrieved pokemon data",
+    data: data,
   };
 };
 
