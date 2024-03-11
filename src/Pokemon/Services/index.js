@@ -1,4 +1,4 @@
-const pokemonResponse = (data, category) => {
+const pokemonResponse = (data) => {
   return {
     message: "Successfully retrieved pokemon data",
     data: data,
