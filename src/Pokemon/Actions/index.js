@@ -179,6 +179,47 @@ const getRandomPokemonAction = async (req, res) => {
   }
 };
 
+const getPokemonEvolutionsAction = async (req, res) => {
+  let status = 200;
+  try {
+    const db = await connectToMongo();
+    const pokemon = db.collection("pokemon2");
+
+    const id = Number(req.params.id);
+
+    const pokemonData = await pokemon.find({ id: id }).toArray();
+    const pokemonName = pokemonData[0].name;
+
+    const evoData = [];
+    const prevEvo = pokemonData[0].prev_evolution;
+    if (prevEvo) {
+      const prevEvoNames = prevEvo.map((evo) => evo.name);
+      evoData.push(...prevEvoNames);
+    }
+
+    evoData.push(pokemonName);
+
+    const nextEvo = pokemonData[0].next_evolution;
+    if (nextEvo) {
+      const nextEvoNames = nextEvo.map((evo) => evo.name);
+      evoData.push(...nextEvoNames);
+    }
+
+    return res.status(status).json({
+      message: `Successfully retrieved evolutions for Pokémon #${id} ${pokemonName}`,
+      data: evoData,
+    });
+  } catch (error) {
+    status = 500;
+    if (error instanceof errors.ValidationError) status = 400;
+    return res.status(status).json({
+      message: `Oops, something went wrong${
+        status === 500 ? " on our end" : ""
+      }.`,
+    });
+  }
+};
+
 module.exports = {
   getAllPokemonDataAction,
   getPokemonByIdAction,
@@ -186,4 +227,5 @@ module.exports = {
   searchPokemonByNameAction,
   listPokemonTypesAction,
   getRandomPokemonAction,
+  getPokemonEvolutionsAction,
 };
