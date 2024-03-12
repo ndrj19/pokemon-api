@@ -153,7 +153,31 @@ const listPokemonTypesAction = async (req, res) => {
   }
 };
 
-// new action: all types
+const getRandomPokemonAction = async (req, res) => {
+  let status = 200;
+  try {
+    const db = await connectToMongo();
+    const pokemon = db.collection("pokemon2");
+
+    const pokemonIds = await pokemon.distinct("id");
+    const numPokemon = pokemonIds.length;
+    const randomId = Math.floor(Math.random() * numPokemon);
+
+    const pokemonData = await pokemon.find({ id: randomId }).toArray();
+    return res.status(status).json({
+      message: `Successfully retrieved random Pokémon #${randomId}`,
+      data: pokemonData,
+    });
+  } catch (error) {
+    status = 500;
+    if (error instanceof errors.ValidationError) status = 400;
+    return res.status(status).json({
+      message: `Oops, something went wrong${
+        status === 500 ? " on our end" : ""
+      }.`,
+    });
+  }
+};
 
 module.exports = {
   getAllPokemonDataAction,
@@ -161,4 +185,5 @@ module.exports = {
   listPokemonNamesAction,
   searchPokemonByNameAction,
   listPokemonTypesAction,
+  getRandomPokemonAction,
 };

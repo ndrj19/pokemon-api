@@ -6,6 +6,7 @@ const {
   listPokemonNamesAction,
   searchPokemonByNameAction,
   listPokemonTypesAction,
+  getRandomPokemonAction,
 } = require("./src/Pokemon/Actions");
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/pokemon", getAllPokemonDataAction);
 app.get("/pokemon/names", listPokemonNamesAction);
 app.get("/pokemon/search", searchPokemonByNameAction);
 app.get("/pokemon/types", listPokemonTypesAction);
+app.get("/pokemon/random", getRandomPokemonAction);
 app.get("/pokemon/:id", getPokemonByIdAction);
 
 app.listen(port, () => {
