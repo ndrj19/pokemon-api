@@ -3,8 +3,9 @@ const express = require("express");
 const {
   getAllPokemonDataAction,
   getPokemonByIdAction,
-  listAllPokemonNamesAction,
+  listPokemonNamesAction,
   searchPokemonByNameAction,
+  listPokemonTypesAction,
 } = require("./src/Pokemon/Actions");
 
 const app = express();
@@ -16,8 +17,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/pokemon", getAllPokemonDataAction);
-app.get("/pokemon/names", listAllPokemonNamesAction);
+app.get("/pokemon/names", listPokemonNamesAction);
 app.get("/pokemon/search", searchPokemonByNameAction);
+app.get("/pokemon/types", listPokemonTypesAction);
 app.get("/pokemon/:id", getPokemonByIdAction);
 
 app.listen(port, () => {

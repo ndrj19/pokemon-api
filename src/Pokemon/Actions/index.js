@@ -8,7 +8,7 @@ const getAllPokemonDataAction = async (req, res) => {
     const db = await connectToMongo();
     const pokemon = db.collection("pokemon2");
 
-    let type = req.query.type;
+    const type = req.query.type;
     const filter = {};
     if (type) {
       filter["type"] = type;
@@ -55,7 +55,7 @@ const getPokemonByIdAction = async (req, res) => {
   }
 };
 
-const listAllPokemonNamesAction = async (req, res) => {
+const listPokemonNamesAction = async (req, res) => {
   let status = 200;
 
   try {
@@ -131,11 +131,34 @@ const searchPokemonByNameAction = async (req, res) => {
   }
 };
 
+const listPokemonTypesAction = async (req, res) => {
+  let status = 200;
+  try {
+    const db = await connectToMongo();
+    const pokemon = db.collection("pokemon2");
+
+    const pokemonData = await pokemon.distinct("type");
+    return res.status(status).json({
+      message: `Successfully retrieved all Pokémon types`,
+      data: pokemonData,
+    });
+  } catch (error) {
+    status = 500;
+    if (error instanceof errors.ValidationError) status = 400;
+    return res.status(status).json({
+      message: `Oops, something went wrong${
+        status === 500 ? " on our end" : ""
+      }.`,
+    });
+  }
+};
+
 // new action: all types
 
 module.exports = {
   getAllPokemonDataAction,
   getPokemonByIdAction,
-  listAllPokemonNamesAction,
+  listPokemonNamesAction,
   searchPokemonByNameAction,
+  listPokemonTypesAction,
 };
