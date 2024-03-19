@@ -220,6 +220,51 @@ const getPokemonEvolutionsAction = async (req, res) => {
   }
 };
 
+const listPokemonByWeight = async (req, res) => {
+  let status = 200;
+  try {
+    const db = await connectToMongo();
+    const pokemon = db.collection("pokemon2");
+
+    const type = req.query.type;
+    const query = {};
+    if (type) {
+      query["type"] = type;
+    }
+
+    // default
+    const sort = { "weight(kg)": -1 };
+
+    const sortOrder = req.query.sortOrder;
+    if (sortOrder) {
+      if (sortOrder === "asc") {
+        sort["weight(kg)"] = 1;
+      } else if (sortOrder === "desc") {
+        sort["weight(kg)"] = -1;
+      }
+    }
+
+    const pokemonData = await pokemon.find(query).sort(sort).toArray();
+    return res.status(status).json({
+      message: `Successfully retrieved all ${
+        type ? type + " type " : ""
+      }Pokémon ordered by ${
+        sort["weight(kg)"] === -1 ? "descending" : "ascending"
+      } weight`,
+      data: pokemonData,
+    });
+  } catch (error) {
+    status = 500;
+    if (error instanceof errors.ValidationError) status = 400;
+    console.log(error);
+    return res.status(status).json({
+      message: `Oops, something went wrong${
+        status === 500 ? " on our end" : ""
+      }.`,
+    });
+  }
+};
+
 module.exports = {
   getAllPokemonDataAction,
   getPokemonByIdAction,
@@ -228,4 +273,5 @@ module.exports = {
   listPokemonTypesAction,
   getRandomPokemonAction,
   getPokemonEvolutionsAction,
+  listPokemonByWeight,
 };
