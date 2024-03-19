@@ -8,6 +8,7 @@ const {
   listPokemonTypesAction,
   getRandomPokemonAction,
   getPokemonEvolutionsAction,
+  listPokemonByWeight,
 } = require("./src/Pokemon/Actions");
 
 const app = express();
@@ -23,6 +24,7 @@ app.get("/pokemon/names", listPokemonNamesAction);
 app.get("/pokemon/search", searchPokemonByNameAction);
 app.get("/pokemon/types", listPokemonTypesAction);
 app.get("/pokemon/random", getRandomPokemonAction);
+app.get("/pokemon/weight", listPokemonByWeight);
 app.get("/pokemon/evolution/:id", getPokemonEvolutionsAction);
 app.get("/pokemon/:id", getPokemonByIdAction);
 
